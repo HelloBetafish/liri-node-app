@@ -1,0 +1,19 @@
+{
+  "name": "liri-node-app",
+  "version": "1.0.0",
+  "description": "Week 10 HW",
+  "main": "liri.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HelloBetafish/liri-node-app.git"
+  },
+  "author": "Bethany Pfeister",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HelloBetafish/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/HelloBetafish/liri-node-app#readme"
+}
