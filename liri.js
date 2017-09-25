@@ -3,7 +3,6 @@ var keys = require('./keys.js');
 var Spotify = require('node-spotify-api');
 var request = require('request');
 
-// console.log(keys.consumer_key);
 var client = new Twitter({
  consumer_key: keys.consumer_key,
  consumer_secret: keys.consumer_secret,
@@ -11,36 +10,32 @@ var client = new Twitter({
  access_token_secret: keys.access_token_secret
 });
 
+var screenName = 'HelloBetafish';
 var movieName = "";
 var userCommand = process.argv[2];
 
 if (userCommand === 'my-tweets'){
+// Allow user to put in any screenname to pull up another user's tweets.
+  if (process.argv[3]){
+  screenName = process.argv[3];
+  }
 
-  // client.get('search/tweets', {q: 'node.js'}, function(error, tweets, response) {
-  // 	if (!error) {
-  // 	  console.log(tweets);
-  // 	}
-  // 	else{
-  // 	  console.log(error);
-  // 	}
-  // });
-
-  // var params = {screen_name: 'nodejs'};
-  // client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  // 	if (!error) {
-  // 	  console.log(tweets);
-  // 	}
-  // 	else{
-  // 	  console.log(error);
-  // 	}
-  // });
-
-  client.get('favorites/list', function(error, tweets, response) {
-  	if (error) throw error;
-  	// console.log(tweets[0].text);
-  	// console.log(tweets);
-  	console.log(tweets.length);
-  	// console.log(JSON.parse(response));
+  var params = {screen_name: screenName};
+  client.get('statuses/user_timeline', params, function(error, tweets, response) {
+  	if (!error) {
+  	  for (var i = 0 ; i < tweets.length ; i++){
+  	  	if (i === 20) { break;}
+  	  	var counter = i + 1;
+  	  	console.log("--------------------------");
+  	  	console.log("Tweet #" + counter + ":");
+  	    console.log(tweets[i].text);
+  	    console.log("Time Created: " + tweets[i].created_at);
+  	  }
+  	  console.log("--------------------------");
+  	}
+  	else{
+  	  console.log(error);
+  	}
   });
 }
 
