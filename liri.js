@@ -40,12 +40,21 @@ if (userCommand === 'my-tweets'){
 }
 
 else if (userCommand === 'spotify-this-song'){
+  for (var i = 3 ; i < process.argv.length ; i++){
+  	songName += process.argv[i] + " ";
+  }
 
 }
 
 else if (userCommand === 'movie-this'){
-  for (var i = 3 ; i < process.argv.length ; i++){
-  	movieName += process.argv[i] + " ";
+  if (!process.argv[3]){
+  	movieName = "Mr. Nobody";
+  }
+  
+  else{
+  	for (var i = 3 ; i < process.argv.length ; i++){
+  	  movieName += process.argv[i] + " ";
+  	}
   }
 
   var queryURL = 'http://www.omdbapi.com/?t=' + movieName + '&y=&plot=short&apikey=40e9cece';
