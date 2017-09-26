@@ -4,14 +4,21 @@ var Spotify = require('node-spotify-api');
 var request = require('request');
 
 var client = new Twitter({
- consumer_key: keys.consumer_key,
- consumer_secret: keys.consumer_secret,
- access_token_key: keys.access_token_key,
- access_token_secret: keys.access_token_secret
+  consumer_key: keys.twitterKeys.consumer_key,
+  consumer_secret: keys.twitterKeys.consumer_secret,
+  access_token_key: keys.twitterKeys.access_token_key,
+  access_token_secret: keys.twitterKeys.access_token_secret
+});
+
+var spotify = new Spotify({
+  id: keys.spotifyKeys.id,
+  secret: keys.spotifyKeys.secret
 });
 
 var screenName = 'HelloBetafish';
 var movieName = "";
+var songName = "";
+var artists = "";
 var userCommand = process.argv[2];
 
 if (userCommand === 'my-tweets'){
@@ -39,18 +46,42 @@ if (userCommand === 'my-tweets'){
   });
 }
 
-else if (userCommand === 'spotify-this-song'){
-  for (var i = 3 ; i < process.argv.length ; i++){
-  	songName += process.argv[i] + " ";
+else if (userCommand === 'spotify-this-song') {
+
+  if (!process.argv[3]) {
+  	songName = "The Sign";
   }
 
+  else {
+    for (var i = 3 ; i < process.argv.length ; i++) {
+  	  songName += process.argv[i] + " ";
+    }
+  }
+  spotify.search({type: 'track', query: songName, limit: 1}, function(error, data) {
+  	if (error) {
+  	  return console.log('Error occured: ' + error);
+  	}
+  	// console.log(data);
+  	// console.log(data.tracks.items);
+  	for (var i = 0 ; i < data.tracks.items[0].artists.length ; i++){
+  	  artists += data.tracks.items[0].artists[i].name + " ; ";
+  	}
+
+  	console.log("--------------------------");
+  	console.log("# of Artists: " + data.tracks.items[0].artists.length);
+  	console.log("Artist(s): " + artists);
+  	console.log("Name of Song: " + songName);
+  	console.log("Preview URL: " + data.tracks.items[0].preview_url);
+  	console.log("Album: " + data.tracks.items[0].album.name);
+  	console.log("--------------------------");
+  });
 }
 
 else if (userCommand === 'movie-this'){
   if (!process.argv[3]){
   	movieName = "Mr. Nobody";
   }
-  
+
   else{
   	for (var i = 3 ; i < process.argv.length ; i++){
   	  movieName += process.argv[i] + " ";
