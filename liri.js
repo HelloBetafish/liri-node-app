@@ -2,6 +2,7 @@ var Twitter = require('twitter');
 var keys = require('./keys.js');
 var Spotify = require('node-spotify-api');
 var request = require('request');
+var fs = require('fs');
 
 var client = new Twitter({
   consumer_key: keys.twitterKeys.consumer_key,
@@ -21,7 +22,25 @@ var songName = "";
 var artists = "";
 var userCommand = process.argv[2];
 
-if (userCommand === 'my-tweets'){
+switch(userCommand) {
+  case "my-tweets" :
+  tweets();
+  break;
+
+  case "spotify-this-song" :
+  spotifySong();
+  break;
+
+  case "movie-this" :
+  movie();
+  break;
+
+  case "do-what-it-says"  :
+  random();
+  break;
+}
+
+function tweets() {
 // Allow user to put in any screenname to pull up another user's tweets.
   if (process.argv[3]){
   screenName = process.argv[3];
@@ -37,6 +56,13 @@ if (userCommand === 'my-tweets'){
   	  	console.log("Tweet #" + counter + ":");
   	    console.log(tweets[i].text);
   	    console.log("Time Created: " + tweets[i].created_at);
+  	    
+  	    fs.appendFile("log.txt", "--------------------------\r\n" + "Tweet #" + counter + ":" +
+  	      tweets[i].text + "\r\nTime Created: " + tweets[i].created_at + "\r\n", function(error) {
+  	      if (error){
+  	      	return console.log(error);
+  	      }
+  	    });
   	  }
   	  console.log("--------------------------");
   	}
@@ -46,10 +72,10 @@ if (userCommand === 'my-tweets'){
   });
 }
 
-else if (userCommand === 'spotify-this-song') {
+function spotifySong() {
 
   if (!process.argv[3]) {
-  	songName = "The Sign";
+  	songName = "We Are Never Ever Getting Back Together";
   }
 
   else {
@@ -68,16 +94,25 @@ else if (userCommand === 'spotify-this-song') {
   	}
 
   	console.log("--------------------------");
-  	console.log("# of Artists: " + data.tracks.items[0].artists.length);
   	console.log("Artist(s): " + artists);
   	console.log("Name of Song: " + songName);
   	console.log("Preview URL: " + data.tracks.items[0].preview_url);
   	console.log("Album: " + data.tracks.items[0].album.name);
   	console.log("--------------------------");
+
+  	fs.appendFile("log.txt", "--------------------------\r\n" + "Artist(s): " + artists + "\r\nName of Song: " + 
+  	  songName + "\r\nPreview URL: " + data.tracks.items[0].preview_url + "\r\nAlbum: " + 
+  	  data.tracks.items[0].album.name + "\r\n", function(error) {
+
+  	  if (error){
+  	    return console.log(error);
+	  }	
+  	});
   });
 }
 
-else if (userCommand === 'movie-this'){
+function movie() {
+
   if (!process.argv[3]){
   	movieName = "Mr. Nobody";
   }
@@ -111,6 +146,16 @@ else if (userCommand === 'movie-this'){
   	  console.log("Plot: " + JSON.parse(body).Plot);
   	  console.log("Actors: " + JSON.parse(body).Actors);
   	  console.log("--------------------------");
+
+  	  fs.appendFile("log.txt", "--------------------------\r\n" + "Title: " + JSON.parse(body).Title + "\r\nYear: " + 
+  	  	JSON.parse(body).Year + "\r\nIMDB Rating : " + JSON.parse(body).imdbRating + "\r\nRotten Tomatoes Rating: " + 
+  	    RTrating + "\r\nCountry: " + JSON.parse(body).Country + "\r\nLanguage: " + JSON.parse(body).Language + 
+  	    "\r\nPlot: " + JSON.parse(body).Plot + "\r\nActors: " + JSON.parse(body).Actors + "\r\n", function(error) {
+
+  	    if (error){
+  	      return console.log(error);
+	    }	
+  	  });
   	}
   	else{
   	  console.log(error);
@@ -118,6 +163,25 @@ else if (userCommand === 'movie-this'){
   });
 }
 
-else if (userCommand === 'do-what-it-says'){
+function random() {
 
+  fs.readFile("random.txt","utf-8", function(error, data) {
+  	if(error) {
+  	  console.log(error);
+  	}
+  	var dataArray = data.split(",");
+  	userCommand = dataArray[0];
+  	process.argv[3] = dataArray[1];
+  	if (userCommand === "my-tweets") {
+  	  tweets();
+  	}
+
+  	else if (userCommand === "spotify-this-song"){
+  	  spotifySong();
+  	}
+
+  	else if (userCommand === "movie-this"){
+  	  movie();
+  	}
+  });
 }
