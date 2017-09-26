@@ -49,6 +49,7 @@ function tweets() {
   var params = {screen_name: screenName};
 
   client.get('statuses/user_timeline', params, function(error, tweets, response) {
+  	
   	if (!error) {
   	  for (var i = 0 ; i < tweets.length ; i++) {
   	  	// Limit to 20 Tweets
@@ -63,6 +64,7 @@ function tweets() {
   	    // Write to log.txt
   	    fs.appendFile("log.txt", "--------------------------\r\n" + "Tweet #" + counter + ":" +
   	      tweets[i].text + "\r\nTime Created: " + tweets[i].created_at + "\r\n", function(error) {
+
   	      if (error){
   	      	return console.log(error);
   	      }
